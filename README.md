@@ -30,7 +30,15 @@ This project will not only allow you to add a very convenient function to your c
 	- Your header file get_next_line.h must at least contain the prototype of the get_next_line() function.
 	- Add all the helper functions you need in the get_next_line_utils.c file.
 	- Because ou will to read files in get_next_line(), add this option to your compiler call : -D BUFFER_SIZE=n, It will define the buffer size for read(), The buffer size value will be mmodified by your peer-evaluators and the Moulinette in order to rest your code.
-	- IMPORTANT: we must be able to compile this project with and without the -D BUFFER_SIZE flag in addition to the usual flags. You can choose the default value of your choice.
 	- You will compile your code as follows (a buffer size of 42 is used as an example): cc -Wall -Wextra -Werror -D BUFFER SIZE=42 <files>.c
 	- We consider that get_next_line() has an undefined behaviour if the files pointed to by the file descriptor changed size since the last call whereas read() didnt reach the end of file.
 	- We also consider that get_next_line() has an undefined behavior when reading a binary file. However, you can implement a logical way to handle this behavior if you want to.
+
+* Forbidden:
+	- You are not allowed to use your libft in this project
+	- lseek() is forbidden
+	- Global variables are forbidden
+
+* Bonus part:
+	- Develop get_next_line() using only one static variable.
+	- Your get_next_line() can manage multiple file descriptors at the same time. For example, if you can read from the file descriptors 3, 4 and 4, you should be able o read from a different fd per call without losing the reading thread of each file descriptor or returning a line from another fd.

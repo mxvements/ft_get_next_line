@@ -1,7 +1,7 @@
 <div align="center">
     <img src="https://img.shields.io/badge/status-finished-success?color=00ABAD&style=flat-square" />
     <img src="https://img.shields.io/badge/started-04%20%2F%2011%20%2F%202023-success?color=00ABAD&style=flat-square" />
-    <img src="https://img.shields.io/badge/score-110%20%2F%20100-success?color=00ABAD&style=flat-square" />
+    <img src="https://img.shields.io/badge/score--%20%2F%20100-success?color=00ABAD&style=flat-square" />
     <img src="https://img.shields.io/github/languages/top/mxvements/ft_get_next_line?color=00ABAD&style=flat-square" />
     <img src="https://img.shields.io/github/last-commit/mxvements/ft_get_next_line?color=00ABAD&style=flat-square" />
     <br>
@@ -19,7 +19,7 @@ This project will not only allow you to add a very convenient function to your c
 | Turn in files | get_next_line.c, get_next_line_utils.c, get_next_line.h |
 | Parameters | fd: the file descriptor to read from |
 | Return value | Read Line: correct behaviour, NULL: there is nothing else to read, or an error occurred |
-| External functs. | red, malloc, free |
+| External functs. | read, malloc, free |
 | Description | wirte a function that returns a line read from a file descriptor |
 
 * Mandatory part:

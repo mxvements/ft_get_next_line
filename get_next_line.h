@@ -6,7 +6,7 @@
 /*   By: luciama2 <luciama2@student.42madrid>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/03 17:01:06 by luciama2          #+#    #+#             */
-/*   Updated: 2023/11/03 17:01:09 by luciama2         ###   ########.fr       */
+/*   Updated: 2023/11/05 19:05:38 by luciama2         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 #include <stdlib.h>
 
 #ifndef BUFFER_SIZE
-#define BUFFER_SIZE 125
+#define BUFFER_SIZE 64
 #endif
 
 char	*update_data(char **stash);

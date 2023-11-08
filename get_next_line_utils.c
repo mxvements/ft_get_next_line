@@ -6,13 +6,13 @@
 /*   By: lmmielgo <lmmielgo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/04 16:19:21 by luciama2          #+#    #+#             */
-/*   Updated: 2023/11/08 01:10:39 by lmmielgo         ###   ########.fr       */
+/*   Updated: 2023/11/08 01:15:55 by lmmielgo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-int	ft_strchr(char *stash, char c)
+int	gnl_strchr(char *stash, char c)
 {
 	size_t	i;
 
@@ -26,7 +26,7 @@ int	ft_strchr(char *stash, char c)
 	return (0);
 }
 
-char	*save_first_line(char *stash, int *endline_i)
+char	*gnl_save_first_line(char *stash, int *endline_i)
 {
 	char	*line;
 	size_t	i;
@@ -42,7 +42,7 @@ char	*save_first_line(char *stash, int *endline_i)
 	return (line);	
 }
 
-char	*delete_first_line(char *stash, int *endline_i)
+char	*gnl_delete_first_line(char *stash, int *endline_i)
 {
 	size_t	i;
 
@@ -58,11 +58,11 @@ char	*delete_first_line(char *stash, int *endline_i)
 	return (stash);
 }
 
-char	*update_line(char **stash, int *endline_i)
+char	*gnl_update_line(char **stash, int *endline_i)
 {
 	char	*line;
 
-	line = save_first_line(*stash, endline_i);
+	line = gnl_save_first_line(*stash, endline_i);
 	if (!line)
 	{
 		free(*stash);
@@ -71,11 +71,13 @@ char	*update_line(char **stash, int *endline_i)
 	}
 	printf("LINE SAVED:\n%s\n", line);
 	printf("STASH WHEN LINE SAVED:\n%s\n", *stash);
-	*stash = delete_first_line(*stash, endline_i);//TODO
+	*stash = gnl_delete_first_line(*stash, endline_i);//TODO
 	if (!(*stash))
 		return (NULL);
 	return (line);
 }
+//TODO gnl_free()
+
 
 /* PRUBEAS CON STATIC*/
 /*

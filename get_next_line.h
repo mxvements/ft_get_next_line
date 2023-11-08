@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.h                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: luciama2 <luciama2@student.42madrid>       +#+  +:+       +#+        */
+/*   By: lmmielgo <lmmielgo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/03 17:01:06 by luciama2          #+#    #+#             */
-/*   Updated: 2023/11/05 19:05:38 by luciama2         ###   ########.fr       */
+/*   Updated: 2023/11/08 01:10:43 by lmmielgo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,10 @@
 #define BUFFER_SIZE 64
 #endif
 
-char	*update_data(char **stash);
 int		ft_strchr(char *stash, char c);
+char	*read_file(int fd, char **stash);
+char	*save_first_line(char *stash, int *endline_i);
+char	*update_line(char **stash, int *endline_i);
 char	*get_next_line(int fd);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: lmmielgo <lmmielgo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/03 17:00:55 by luciama2          #+#    #+#             */
-/*   Updated: 2023/11/08 01:17:04 by lmmielgo         ###   ########.fr       */
+/*   Updated: 2023/11/08 17:24:57 by lmmielgo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,18 +15,41 @@
 
 char	*gnl_update_stash(char **stash, char **buff)
 {
-	//ESTO ME HACE SEGFAULT OBVIOOOO
 	size_t	i;
 	size_t	j;
+	size_t	len;
+	char	*temp;
 
 	i = 0;
+	j = 0;
 	if (!(*stash))
-		return (*buff);
-	while (*stash[i] != '\0')
-		i++;
-	while (*buff[j] != '\0')
-		*stash[i + j] = *buff[j++];
-	*stash[i + j] = '\0';
+	{
+		*stash = *buff;
+	}
+	else
+	{
+		//STASH IS NOT EMPTY, WE NEED TO CONCATENATE BOTH STRINGS AND SAVE 
+		//ENOUGH SPACE ON *STASH
+		len = gnl_strlen(*stash);
+		temp = (char *)malloc(sizeof(char) + (BUFFER_SIZE + len + 1));
+		if (!(temp))
+			return (NULL);
+		//concatenate strings (stash and buff) on temp
+		while (stash[0][i] != '\0')
+		{
+			temp[i] = stash[0][i];
+			i++;
+		}
+		while (buff[0][j] != '\0')
+		{
+			temp[i + j] = buff[0][j];
+			j++;
+		}
+		temp[i + j] = '\0';
+		//use double pointers to change the strings
+		*stash = temp;
+		//TEMP LEAKKING
+	}
 	return (*stash);
 }
 
@@ -44,19 +67,19 @@ char	*gnl_read_file(int fd, char **stash)
 		free(buff);
 		return (NULL);
 	}
+	buff[readbytes] = '\0';
 	*stash = gnl_update_stash(stash, &buff);
 	if (readbytes == 0) //file ending
 	{
 		return (*stash);//placeholder
 	}
-	stash[readbytes] = '\0';
 	printf("BYTES_READ:\n%zu\n", readbytes);
 	printf("BUFFER_READ:\n%s\n", *stash);
 	return (*stash);
 }
 
 char	*get_next_line(int fd)
-{
+{	
 	static char *stash;
 	char		*line;
 	int			endline_i;
@@ -79,6 +102,8 @@ int	main(void)
 	int	fd;
 
 	fd = open("./file.txt", O_RDONLY);
+	get_next_line(fd);
+	get_next_line(fd);
 	get_next_line(fd);
 	get_next_line(fd);
 	get_next_line(fd);

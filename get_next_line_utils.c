@@ -6,11 +6,21 @@
 /*   By: lmmielgo <lmmielgo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/04 16:19:21 by luciama2          #+#    #+#             */
-/*   Updated: 2023/11/08 01:15:55 by lmmielgo         ###   ########.fr       */
+/*   Updated: 2023/11/08 14:35:23 by lmmielgo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
+
+int	gnl_strlen(char *s)
+{
+	size_t	i;
+
+	i = 0;
+	while (s[i] != '\0')
+		i++;
+	return (i);
+}
 
 int	gnl_strchr(char *stash, char c)
 {

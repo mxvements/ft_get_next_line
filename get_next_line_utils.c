@@ -6,7 +6,7 @@
 /*   By: lmmielgo <lmmielgo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/04 16:19:21 by luciama2          #+#    #+#             */
-/*   Updated: 2023/11/08 14:35:23 by lmmielgo         ###   ########.fr       */
+/*   Updated: 2023/11/08 20:34:56 by lmmielgo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,20 +36,16 @@ int	gnl_strchr(char *stash, char c)
 	return (0);
 }
 
-char	*gnl_save_first_line(char *stash, int *endline_i)
+void	gnl_save_first_line(char **line, char *stash, int *endline_i)
 {
-	char	*line;
 	size_t	i;
 
-	line = (char *)malloc(sizeof(char) * (*endline_i + 1));
-	if (!line)
-		return (NULL);
 	i = (size_t)*endline_i;
-	line[i] = '\0';
+	line[0][i] = '\0';
 	while (--i > 0)
-		line[i] = stash[i];
-	line[0] = stash[0];
-	return (line);	
+		line[0][i] = stash[i];
+	line[0][0] = stash[0];
+	return ;	
 }
 
 char	*gnl_delete_first_line(char *stash, int *endline_i)
@@ -72,19 +68,16 @@ char	*gnl_update_line(char **stash, int *endline_i)
 {
 	char	*line;
 
-	line = gnl_save_first_line(*stash, endline_i);
+	line = (char *)malloc(sizeof(char) * (*endline_i + 1)); //FREE THIS
 	if (!line)
-	{
-		free(*stash);
-		stash = NULL;
 		return (NULL);
-	}
+	gnl_save_first_line(&line, *stash, endline_i);
+	
 	printf("LINE SAVED:\n%s\n", line);
-	printf("STASH WHEN LINE SAVED:\n%s\n", *stash);
-	*stash = gnl_delete_first_line(*stash, endline_i);//TODO
+	*stash = gnl_delete_first_line(*stash, endline_i);
 	if (!(*stash))
 		return (NULL);
-	return (line);
+	return ((char *)line);
 }
 //TODO gnl_free()
 

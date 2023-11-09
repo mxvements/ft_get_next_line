@@ -6,51 +6,55 @@
 /*   By: lmmielgo <lmmielgo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/03 17:00:55 by luciama2          #+#    #+#             */
-/*   Updated: 2023/11/08 17:24:57 by lmmielgo         ###   ########.fr       */
+/*   Updated: 2023/11/09 01:20:09 by lmmielgo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 #include <fcntl.h>
 
-char	*gnl_update_stash(char **stash, char **buff)
+/*
+void	gnl_memcpy(char **dst, char **src)
 {
 	size_t	i;
-	size_t	j;
+	
+	i = 0;
+	while (src[0][i] != '\0')
+	{
+		dst[0][i] = src[0][i];
+		i++;
+	}
+	dst[0][i] = '\0';
+	return ;
+	
+}*/
+
+char	*gnl_update_stash(char **stash, char **buff)
+{
+	int	i;
+	int	j;
 	size_t	len;
 	char	*temp;
 
-	i = 0;
-	j = 0;
+	i = -1;
+	j = -1;
 	if (!(*stash))
-	{
-		*stash = *buff;
-	}
+		return (*buff); //*stashcopy strings
 	else
 	{
-		//STASH IS NOT EMPTY, WE NEED TO CONCATENATE BOTH STRINGS AND SAVE 
-		//ENOUGH SPACE ON *STASH
 		len = gnl_strlen(*stash);
 		temp = (char *)malloc(sizeof(char) + (BUFFER_SIZE + len + 1));
 		if (!(temp))
 			return (NULL);
 		//concatenate strings (stash and buff) on temp
-		while (stash[0][i] != '\0')
-		{
+		while (stash[0][++i] != '\0')
 			temp[i] = stash[0][i];
-			i++;
-		}
-		while (buff[0][j] != '\0')
-		{
+		while (buff[0][++j] != '\0')
 			temp[i + j] = buff[0][j];
-			j++;
-		}
 		temp[i + j] = '\0';
-		//use double pointers to change the strings
-		*stash = temp;
-		//TEMP LEAKKING
+		return (temp); //copy strings
+		//FREE TEMP
 	}
-	return (*stash);
 }
 
 char	*gnl_read_file(int fd, char **stash)
@@ -67,14 +71,16 @@ char	*gnl_read_file(int fd, char **stash)
 		free(buff);
 		return (NULL);
 	}
-	buff[readbytes] = '\0';
-	*stash = gnl_update_stash(stash, &buff);
 	if (readbytes == 0) //file ending
 	{
+		free(buff);
 		return (*stash);//placeholder
 	}
+	buff[readbytes] = '\0';
+	*stash = gnl_update_stash(stash, &buff);
 	printf("BYTES_READ:\n%zu\n", readbytes);
 	printf("BUFFER_READ:\n%s\n", *stash);
+	//FREE BUFF
 	return (*stash);
 }
 
@@ -88,25 +94,26 @@ char	*get_next_line(int fd)
 	
 	/*if (ft_strchr(stash, '\n'))
 		return(update_data(&stash));*/
-	stash = gnl_read_file(fd, &stash); //read_file uses read and BUFFER_SIZE
-	if (!stash)
-		return (NULL);
-	endline_i = gnl_strchr(stash, '\n');
+	endline_i = 0;
+	while (endline_i == 0)
+	{
+		stash = gnl_read_file(fd, &stash); //read_file uses read and BUFFER_SIZE
+		endline_i = gnl_strchr(stash, '\n');
+	}
 	if (endline_i != 0)
-		return(gnl_update_line(&stash, &endline_i)); //TODO: quitar el return
+		line = gnl_update_line(&stash, &endline_i);
 	return (line);
 }
 
 int	main(void)
 {
 	int	fd;
+	char	*gnl;
 
 	fd = open("./file.txt", O_RDONLY);
-	get_next_line(fd);
-	get_next_line(fd);
-	get_next_line(fd);
-	get_next_line(fd);
-	get_next_line(fd);
+	gnl = get_next_line(fd);
+	printf("MAIN:\n%s", gnl);
+	free(gnl);
 	close(fd);
 
 	return (0);

@@ -26,7 +26,7 @@ void	gnl_free(char **s)
 }
 
 //2
-void	gnl_memcpy(char **dst, char **src, size_t len)
+char	*gnl_memcpy(char **dst, char **src, size_t len)
 {
 	size_t	i;
 	
@@ -37,7 +37,7 @@ void	gnl_memcpy(char **dst, char **src, size_t len)
 		i++;
 	}
 	dst[0][i] = '\0';
-	return ;
+	return (*dst);
 	
 }
 
@@ -51,22 +51,17 @@ char	*gnl_update_stash(char **stash, char **buff)
 
 	i = -1;
 	j = -1;
-	if (!(*stash))
-	{
-		//gnl_memcpy(stash, buff, (size_t)(BUFFER_SIZE + 1));
-		return (*buff); //*stash = *buff copy strings
-	}
-	len = gnl_strlen(*stash);
+	/*len = gnl_strlen(*stash);
 	temp = (char *)malloc(sizeof(char) + (BUFFER_SIZE + len + 1));
 	if (!(temp))
-		return (NULL);
+		return (NULL);*/
 	//concatenate strings (stash and buff) on temp
 	while (stash[0][++i] != '\0')
 		temp[i] = stash[0][i];
 	while (buff[0][++j] != '\0')
 		temp[i + j] = buff[0][j];
 	temp[i + j] = '\0';
-	return (temp); //copy strings
+	return (gnl_memcpy(stash, &temp, (BUFFER_SIZE + len))); //copy strings
 	//FREE TEMP
 }
 
@@ -74,24 +69,37 @@ char	*gnl_update_stash(char **stash, char **buff)
 char	*gnl_read_file(int fd, char **stash)
 {
 	char	*buff;
+	char	*temp;
 	size_t	readbytes;
+	size_t	len;
 
 	buff = (char *) malloc(sizeof(char) * (BUFFER_SIZE + 1));
 	if (!buff)
 		return (NULL);
 	readbytes = read(fd, buff, BUFFER_SIZE);
+	buff[readbytes] = '\0';
 	if (readbytes > BUFFER_SIZE)//read error
 		return (free(buff), buff = NULL, NULL);
 	if (readbytes == 0) //file ending
+		return (free(buff), buff = NULL, *stash);
+	if (!(*stash))
 	{
-		free(buff);
-		return (*stash);//placeholder
+		temp = (char *)malloc(sizeof(char) * (BUFFER_SIZE + 1));
+		if (!(*temp))
+			return (NULL);
+		return(gnl_memcpy(&temp, &buff, BUFFER_SIZE)); //copy buff on temp
 	}
-	buff[readbytes] = '\0';
-	*stash = gnl_update_stash(stash, &buff);
+	else
+	{
+		len = gnl_strlen(*stash);
+		temp = (char *)malloc(sizeof(char) + (BUFFER_SIZE + len + 1));
+		if (!(temp))
+			return (NULL);
+		*stash = gnl_update_stash(stash, &buff);
+	}
 	//printf("BYTES_READ:\n%zu\n", readbytes);
 	//printf("BUFFER_READ:\n%s\n", *stash);
-	return (*stash); //CANT FREE BUFF WHILE MEMORY ISNT COPIED
+	return (free(buff), buff = NULL, *stash); //CANT FREE BUFF WHILE MEMORY ISNT COPIED
 }
 
 //5

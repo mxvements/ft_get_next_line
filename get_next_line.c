@@ -26,13 +26,12 @@ void	gnl_free(char **s)
 }
 
 //2
-/*
-void	gnl_memcpy(char **dst, char **src)
+void	gnl_memcpy(char **dst, char **src, size_t len)
 {
 	size_t	i;
 	
 	i = 0;
-	while (src[0][i] != '\0')
+	while (i < len)
 	{
 		dst[0][i] = src[0][i];
 		i++;
@@ -40,35 +39,35 @@ void	gnl_memcpy(char **dst, char **src)
 	dst[0][i] = '\0';
 	return ;
 	
-}*/
+}
 
 //3
 char	*gnl_update_stash(char **stash, char **buff)
 {
-	int	i;
-	int	j;
+	int		i;
+	int		j;
 	size_t	len;
 	char	*temp;
 
 	i = -1;
 	j = -1;
 	if (!(*stash))
-		return (*buff); //*stash = *buff copy strings
-	else
 	{
-		len = gnl_strlen(*stash);
-		temp = (char *)malloc(sizeof(char) + (BUFFER_SIZE + len + 1));
-		if (!(temp))
-			return (NULL);
-		//concatenate strings (stash and buff) on temp
-		while (stash[0][++i] != '\0')
-			temp[i] = stash[0][i];
-		while (buff[0][++j] != '\0')
-			temp[i + j] = buff[0][j];
-		temp[i + j] = '\0';
-		return (temp); //copy strings
-		//FREE TEMP
+		//gnl_memcpy(stash, buff, (size_t)(BUFFER_SIZE + 1));
+		return (*buff); //*stash = *buff copy strings
 	}
+	len = gnl_strlen(*stash);
+	temp = (char *)malloc(sizeof(char) + (BUFFER_SIZE + len + 1));
+	if (!(temp))
+		return (NULL);
+	//concatenate strings (stash and buff) on temp
+	while (stash[0][++i] != '\0')
+		temp[i] = stash[0][i];
+	while (buff[0][++j] != '\0')
+		temp[i + j] = buff[0][j];
+	temp[i + j] = '\0';
+	return (temp); //copy strings
+	//FREE TEMP
 }
 
 //4

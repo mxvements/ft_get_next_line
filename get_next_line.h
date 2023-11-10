@@ -21,6 +21,7 @@
 #define BUFFER_SIZE 64
 #endif
 
+char	*gnl_update_stash(char **stash, char **buff);
 int		gnl_strlen(char *s);
 int		gnl_strchr(char *stash, char c);
 char	*gnl_read_file(int fd, char **stash);

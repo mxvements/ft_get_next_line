@@ -24,8 +24,8 @@
 int		gnl_strlen(char *s);
 int		gnl_strchr(char *stash, char c);
 char	*gnl_read_file(int fd, char **stash);
-char	*gnl_save_first_line(char *stash, int *endline_i);
-char	*gnl_update_line(char **stash, int *endline_i);
+char	*gnl_save_first_line(char *stash, int *linelen);
+char	*gnl_update_line(char **stash, int *linelen);
 char	*get_next_line(int fd);
 
 #endif

@@ -13,8 +13,19 @@
 #include "get_next_line.h"
 #include <fcntl.h>
 
-//TODO_ gnl_free();
+//1
+void	gnl_free(char **s)
+{
+	size_t i;
 
+	i = 0;
+	while (s[i] != NULL)
+		free(s[i]);
+	free(s);
+	return ;
+}
+
+//2
 /*
 void	gnl_memcpy(char **dst, char **src)
 {
@@ -31,6 +42,7 @@ void	gnl_memcpy(char **dst, char **src)
 	
 }*/
 
+//3
 char	*gnl_update_stash(char **stash, char **buff)
 {
 	int	i;
@@ -41,7 +53,7 @@ char	*gnl_update_stash(char **stash, char **buff)
 	i = -1;
 	j = -1;
 	if (!(*stash))
-		return (*buff); //*stashcopy strings
+		return (*buff); //*stash = *buff copy strings
 	else
 	{
 		len = gnl_strlen(*stash);
@@ -59,6 +71,7 @@ char	*gnl_update_stash(char **stash, char **buff)
 	}
 }
 
+//4
 char	*gnl_read_file(int fd, char **stash)
 {
 	char	*buff;
@@ -69,10 +82,7 @@ char	*gnl_read_file(int fd, char **stash)
 		return (NULL);
 	readbytes = read(fd, buff, BUFFER_SIZE);
 	if (readbytes > BUFFER_SIZE)//read error
-	{
-		free(buff);
-		return (NULL);
-	}
+		return (free(buff), buff = NULL, NULL);
 	if (readbytes == 0) //file ending
 	{
 		free(buff);
@@ -82,10 +92,10 @@ char	*gnl_read_file(int fd, char **stash)
 	*stash = gnl_update_stash(stash, &buff);
 	//printf("BYTES_READ:\n%zu\n", readbytes);
 	//printf("BUFFER_READ:\n%s\n", *stash);
-	//FREE BUFF
-	return (*stash);
+	return (*stash); //CANT FREE BUFF WHILE MEMORY ISNT COPIED
 }
 
+//5
 char	*get_next_line(int fd)
 {	
 	static char *stash;
@@ -97,9 +107,10 @@ char	*get_next_line(int fd)
 	/*if (ft_strchr(stash, '\n'))
 		return(update_data(&stash));*/
 	endline_i = 0;
+	line = NULL;
 	while (endline_i == 0)
 	{
-		stash = gnl_read_file(fd, &stash); //read_file uses read and BUFFER_SIZE
+		stash = gnl_read_file(fd, &stash);
 		endline_i = gnl_strchr(stash, '\n');
 	}
 	if (endline_i != 0)

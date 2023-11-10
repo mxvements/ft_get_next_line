@@ -6,12 +6,14 @@
 /*   By: lmmielgo <lmmielgo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/03 17:00:55 by luciama2          #+#    #+#             */
-/*   Updated: 2023/11/09 01:20:09 by lmmielgo         ###   ########.fr       */
+/*   Updated: 2023/11/09 22:45:05 by lmmielgo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 #include <fcntl.h>
+
+//TODO_ gnl_free();
 
 /*
 void	gnl_memcpy(char **dst, char **src)
@@ -78,8 +80,8 @@ char	*gnl_read_file(int fd, char **stash)
 	}
 	buff[readbytes] = '\0';
 	*stash = gnl_update_stash(stash, &buff);
-	printf("BYTES_READ:\n%zu\n", readbytes);
-	printf("BUFFER_READ:\n%s\n", *stash);
+	//printf("BYTES_READ:\n%zu\n", readbytes);
+	//printf("BUFFER_READ:\n%s\n", *stash);
 	//FREE BUFF
 	return (*stash);
 }
@@ -105,12 +107,15 @@ char	*get_next_line(int fd)
 	return (line);
 }
 
-int	main(void)
+int	main(void) 
 {
 	int	fd;
 	char	*gnl;
 
 	fd = open("./file.txt", O_RDONLY);
+	gnl = get_next_line(fd);
+	printf("MAIN:\n%s", gnl);
+	free(gnl);
 	gnl = get_next_line(fd);
 	printf("MAIN:\n%s", gnl);
 	free(gnl);

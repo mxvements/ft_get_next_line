@@ -62,19 +62,21 @@ char	*gnl_read_file(int fd, char **stash)
 		return (NULL);
 	readbytes = read(fd, buff, BUFFER_SIZE);
 	buff[readbytes] = '\0';
-	if (readbytes > BUFFER_SIZE)//read error
+	if (readbytes > BUFFER_SIZE)
 		return (free(buff), buff = NULL, NULL);
-	if (readbytes == 0) //file ending
+	if (readbytes == 0)
 		return (free(buff), buff = NULL, *stash);
 	if (!(*stash))
 	{
 		temp = (char *)malloc(sizeof(char) * (BUFFER_SIZE + 1));
 		if (!(temp))
 			return (NULL);
-		return(free(buff), gnl_memcpy(&temp, &buff, BUFFER_SIZE));
+		temp = gnl_memcpy(&temp, &buff, BUFFER_SIZE);
+		return(free(buff), temp);
 	}
 	temp = gnl_strjoin(stash, &buff);
 	free(*stash);
+	stash = NULL;
 	return(free(buff), temp);
 }
 
@@ -87,10 +89,10 @@ char	*get_next_line(int fd)
 
 	//TODO: protect fd, BUFFER_SIZE and read()
 	
-	/*if (ft_strchr(stash, '\n'))
-		return(update_data(&stash));*/
 	endline_i = 0;
 	line = NULL;
+	/*if (gnl_strchr(stash, '\n') != 0)
+		return(gnl_update_line(&stash, &endline_i));*/
 	while (endline_i == 0)
 	{
 		stash = gnl_read_file(fd, &stash);
@@ -100,10 +102,7 @@ char	*get_next_line(int fd)
 		line = gnl_update_line(&stash, &endline_i);
 	return (line);
 }
-void	checkleaks(void)
-{
-	system("leaks -q a.out");
-}
+
 int	main(void) 
 {
 	int	fd;

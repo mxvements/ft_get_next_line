@@ -17,7 +17,7 @@
 char	*gnl_memcpy(char **dst, char **src, size_t len)
 {
 	size_t	i;
-	
+
 	i = 0;
 	while (i < len)
 	{
@@ -72,23 +72,22 @@ char	*gnl_read_file(int fd, char **stash)
 		if (!(temp))
 			return (NULL);
 		temp = gnl_memcpy(&temp, &buff, BUFFER_SIZE);
-		return(free(buff), temp);
+		return (free(buff), temp);
 	}
 	temp = gnl_strjoin(stash, &buff);
 	free(*stash);
 	stash = NULL;
-	return(free(buff), temp);
+	return (free(buff), temp);
 }
 
 //5
 char	*get_next_line(int fd)
 {	
-	static char *stash;
+	static char	*stash;
 	char		*line;
 	int			endline_i;
 
 	//TODO: protect fd, BUFFER_SIZE and read()
-	
 	endline_i = 0;
 	line = NULL;
 	/*if (gnl_strchr(stash, '\n') != 0)
@@ -103,9 +102,9 @@ char	*get_next_line(int fd)
 	return (line);
 }
 
-int	main(void) 
+int	main(void)
 {
-	int	fd;
+	int		fd;
 	char	*gnl;
 
 	fd = open("./file.txt", O_RDONLY);
@@ -120,6 +119,5 @@ int	main(void)
 	free(gnl);
 	close(fd);
 	system("leaks -q a.out");
-
 	return (0);
 }

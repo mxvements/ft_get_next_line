@@ -11,15 +11,15 @@
 /* ************************************************************************** */
 
 #ifndef GET_NEXT_LINE_H
-#define GET_NEXT_LINE_H
+# define GET_NEXT_LINE_H
 
-#include <unistd.h>
-#include <stdio.h>
-#include <stdlib.h>
+# include <unistd.h>
+# include <stdio.h>
+# include <stdlib.h>
 
-#ifndef BUFFER_SIZE
-#define BUFFER_SIZE 64
-#endif
+# ifndef BUFFER_SIZE
+# define BUFFER_SIZE 64
+# endif
 
 char	*gnl_memcpy(char **dst, char **src, size_t len);
 char	*gnl_strjoin(char **stash, char **buff);

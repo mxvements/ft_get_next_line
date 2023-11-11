@@ -49,7 +49,7 @@ char	*gnl_save_first_line(char *stash, int *linelen)
 	line = (char *)malloc(sizeof(char) * (*linelen + 1));
 	if (!line)
 		return (NULL);
-	i = (size_t)*linelen;
+	i = (size_t)(*linelen);
 	line[i] = '\0';
 	while (--i > 0)
 		line[i] = stash[i];
@@ -83,7 +83,7 @@ char	*gnl_update_line(char **stash, int *endline_i)
 
 	if (!stash || !endline_i)
 		return (NULL);
-	linelen =  *endline_i + 1;
+	linelen = *endline_i + 1;
 	line = gnl_save_first_line(*stash, &linelen);
 	if (!line)
 		return (NULL);

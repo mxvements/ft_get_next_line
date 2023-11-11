@@ -13,18 +13,6 @@
 #include "get_next_line.h"
 #include <fcntl.h>
 
-//1
-void	gnl_free(char **s)
-{
-	size_t i;
-
-	i = 0;
-	while (s[i] != NULL)
-		free(s[i]);
-	free(s);
-	return ;
-}
-
 //2
 char	*gnl_memcpy(char **dst, char **src, size_t len)
 {
@@ -38,11 +26,10 @@ char	*gnl_memcpy(char **dst, char **src, size_t len)
 	}
 	dst[0][i] = '\0';
 	return (*dst);
-	
 }
 
 //3
-char	*gnl_update_stash(char **stash, char **buff)
+char	*gnl_strjoin(char **stash, char **buff)
 {
 	int		i;
 	int		j;
@@ -51,18 +38,16 @@ char	*gnl_update_stash(char **stash, char **buff)
 
 	i = -1;
 	j = -1;
-	/*len = gnl_strlen(*stash);
+	len = gnl_strlen(*stash);
 	temp = (char *)malloc(sizeof(char) + (BUFFER_SIZE + len + 1));
 	if (!(temp))
-		return (NULL);*/
-	//concatenate strings (stash and buff) on temp
+		return (NULL);
 	while (stash[0][++i] != '\0')
 		temp[i] = stash[0][i];
 	while (buff[0][++j] != '\0')
 		temp[i + j] = buff[0][j];
 	temp[i + j] = '\0';
-	return (gnl_memcpy(stash, &temp, (BUFFER_SIZE + len))); //copy strings
-	//FREE TEMP
+	return (temp);
 }
 
 //4
@@ -71,7 +56,6 @@ char	*gnl_read_file(int fd, char **stash)
 	char	*buff;
 	char	*temp;
 	size_t	readbytes;
-	size_t	len;
 
 	buff = (char *) malloc(sizeof(char) * (BUFFER_SIZE + 1));
 	if (!buff)
@@ -85,21 +69,13 @@ char	*gnl_read_file(int fd, char **stash)
 	if (!(*stash))
 	{
 		temp = (char *)malloc(sizeof(char) * (BUFFER_SIZE + 1));
-		if (!(*temp))
-			return (NULL);
-		return(gnl_memcpy(&temp, &buff, BUFFER_SIZE)); //copy buff on temp
-	}
-	else
-	{
-		len = gnl_strlen(*stash);
-		temp = (char *)malloc(sizeof(char) + (BUFFER_SIZE + len + 1));
 		if (!(temp))
 			return (NULL);
-		*stash = gnl_update_stash(stash, &buff);
+		return(free(buff), gnl_memcpy(&temp, &buff, BUFFER_SIZE));
 	}
-	//printf("BYTES_READ:\n%zu\n", readbytes);
-	//printf("BUFFER_READ:\n%s\n", *stash);
-	return (free(buff), buff = NULL, *stash); //CANT FREE BUFF WHILE MEMORY ISNT COPIED
+	temp = gnl_strjoin(stash, &buff);
+	free(*stash);
+	return(free(buff), temp);
 }
 
 //5
@@ -124,7 +100,10 @@ char	*get_next_line(int fd)
 		line = gnl_update_line(&stash, &endline_i);
 	return (line);
 }
-
+void	checkleaks(void)
+{
+	system("leaks -q a.out");
+}
 int	main(void) 
 {
 	int	fd;
@@ -137,7 +116,11 @@ int	main(void)
 	gnl = get_next_line(fd);
 	printf("MAIN:\n%s", gnl);
 	free(gnl);
+	gnl = get_next_line(fd);
+	printf("MAIN:\n%s", gnl);
+	free(gnl);
 	close(fd);
+	system("leaks -q a.out");
 
 	return (0);
 }

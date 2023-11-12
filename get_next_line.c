@@ -87,11 +87,10 @@ char	*get_next_line(int fd)
 	char		*line;
 	int			endline_i;
 
-	//TODO: protect fd, BUFFER_SIZE and read()
-	endline_i = 0;
+	if (fd < 0 || BUFFER_SIZE < 1)
+		return (stash = NULL, line = NULL, NULL);
 	line = NULL;
-	/*if (gnl_strchr(stash, '\n') != 0)
-		return(gnl_update_line(&stash, &endline_i));*/
+	endline_i = 0;
 	while (endline_i == 0)
 	{
 		stash = gnl_read_file(fd, &stash);

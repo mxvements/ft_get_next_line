@@ -43,54 +43,60 @@ int	gnl_strchr(char *stash, char c)
 }
 
 //3
-char	*gnl_save_first_line(char *stash, int *linelen)
+char	*gnl_save_first_line(t_stash *s_stash, int linelen)
 {
 	ssize_t	i;
 	char	*line;
 
-	if (!stash || !linelen)
+	if (!s_stash)
 		return (NULL);
-	line = (char *)malloc(sizeof(char) * (*linelen + 1));
+	line = (char *)malloc(sizeof(char) * (linelen + 1));
 	if (!line)
 		return (NULL);
 	i = -1;
-	line[*linelen] = '\0';
-	while (++i < *linelen)
-		line[i] = stash[i];
+	line[linelen] = '\0';
+	while (++i < linelen)
+		line[i] = s_stash->stash[i];
 	return (line);
 }
 
 //4
-char	*gnl_delete_first_line(char *stash, int *linelen)
+char	*gnl_delete_first_line(t_stash *s_stash, int linelen)
 {
-	size_t	i;
+	ssize_t	i;
 
-	//potencialmente, actualizar la longitud del stash
-	i = 0;
-	if (!stash || !linelen)
+	if (!s_stash)
 		return (NULL);
-	while (stash[i + *linelen] != '\0')
-	{
-		stash[i] = stash[i + *linelen];
-		i++;
-	}
-	while (stash[i] != '\0')
-		stash[i++] = '\0';
-	return (stash);
+	//mem move
+	i = -1;
+	while (s_stash->stash[++i + linelen] != '\0')
+		s_stash->stash[i] = s_stash->stash[i + linelen];
+	while (s_stash->stash[i] != '\0')
+		s_stash->stash[i++] = '\0';
+	//update stlen
+	s_stash->stlen = gnl_strlen(s_stash->stash);
+	return (s_stash->stash);
 }
 
 //5
-char	*gnl_get_line(char **stash, int *endline_i)
+char	*gnl_get_line(t_stash *s_stash)
 {
 	char	*line;
+	int		linelen;
 
-	if (!stash || !endline_i)
+	if (!s_stash)
 		return (NULL);
-	line = gnl_save_first_line(*stash, endline_i);
+	if (s_stash->readbytes != 0)
+		linelen = s_stash->nwline_i;
+	else
+		linelen = s_stash->stlen;
+	if (linelen == 0)
+		return (NULL);
+	line = gnl_save_first_line(s_stash, linelen);
 	if (!line)
 		return (NULL);
-	*stash = gnl_delete_first_line(*stash, endline_i);
-	if (!(*stash))
+	s_stash->stash = gnl_delete_first_line(s_stash, linelen);
+	if (!(s_stash->stash))
 		return (free(line), NULL);
 	return (line);
 }

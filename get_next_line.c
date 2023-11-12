@@ -13,7 +13,7 @@
 #include "get_next_line.h"
 #include <fcntl.h>
 
-//2
+//1
 char	*gnl_memcpy(char **dst, char **src, size_t len)
 {
 	size_t	i;
@@ -28,7 +28,7 @@ char	*gnl_memcpy(char **dst, char **src, size_t len)
 	return (*dst);
 }
 
-//3
+//2
 char	*gnl_strjoin(char **stash, char **buff)
 {
 	int		i;
@@ -50,66 +50,63 @@ char	*gnl_strjoin(char **stash, char **buff)
 	return (temp);
 }
 
-//4
-char	*gnl_read_file(int fd, char **stash)
+//3
+char	*gnl_read_file(int fd, t_stash *s_stash)
 {
 	char	*buff;
 	char	*temp;
-	ssize_t	readbytes;
 
 	buff = (char *) malloc(sizeof(char) * (BUFFER_SIZE + 1));
 	if (!buff)
 		return (NULL);
-	readbytes = read(fd, buff, BUFFER_SIZE);
-	buff[readbytes] = '\0'; //heap-buffer-overflow
-	if (readbytes <= 0)
+	s_stash->readbytes = read(fd, buff, BUFFER_SIZE);
+	buff[s_stash->readbytes] = '\0'; //heap-buffer-overflow
+	if (s_stash->readbytes <= 0)
+	{
+		//update STRUCT to know there was an error/i got to the end of file
 		return (free(buff), NULL);
-	if (!(*stash))
+	}
+	if (!(*s_stash->stash))
 	{
 		temp = (char *)malloc(sizeof(char) * (BUFFER_SIZE + 1));
 		if (!(temp))
 			return (free(buff), NULL);
-		temp = gnl_memcpy(&temp, &buff, readbytes);
+		temp = gnl_memcpy(&temp, &buff, s_stash->readbytes);
 		return (free(buff), temp);
 	}
-	temp = gnl_strjoin(stash, &buff);
-	free(*stash);
-	stash = NULL;
+	temp = gnl_strjoin(&s_stash->stash, &buff);
+	free(s_stash->stash);
 	return (free(buff), temp);
 }
-
+//4
+void	gnl_update_struct(int fd, t_stash *s_stash)
+{
+	s_stash->stash = gnl_read_file(fd, s_stash);
+	if (!s_stash->stash)
+		return ;
+	s_stash->nwline_i = gnl_strchr(s_stash->stash, '\n');
+	s_stash->stlen = gnl_strlen(s_stash->stash);
+	return ;
+}
 //5
 char	*get_next_line(int fd)
 {	
-	static char	*stash;
-	int			endline_i;
-	int			stashlen;
+	static t_stash	s_stash;
 
 	if (fd < 0 || fd > 256 || BUFFER_SIZE < 1)
-		return (free(stash), NULL);
-	if (stash) //if stash is not empty
+		return (NULL); //probably, free s_stash.stash
+	if (s_stash.stash) //if stash is not empty
 	{
-		endline_i = gnl_strchr(stash, '\n'); //and has a newlines
-		stashlen = gnl_strlen(stash);
-		if (endline_i == 0 && stashlen == 0)
-			return (free(stash), NULL);
-		if (endline_i == 0 && stashlen != 0)
-			return(gnl_get_line(&stash, &stashlen));
-		return (gnl_get_line(&stash, &endline_i));
+		//TO BE UPDATED WITH THE STRUCT
+		//s_stash.nwline_i = gnl_strchr(s_stash.stash, '\n'); //and has a newlines //UPDATE STRUCT
+		//s_stash.stlen = gnl_strlen(s_stash.stash);//this should already be updated
+		return (gnl_get_line(&s_stash));
 	}
-	endline_i = 0;
-	stashlen = 0;
-	while (stashlen == 0)
+	while (!s_stash.stash)
 	{
-		stash = gnl_read_file(fd, &stash);
-		if (!stash)
-			return (free(stash), NULL);
-		stashlen = gnl_strlen(stash);
-		endline_i = gnl_strchr(stash, '\n');
+		gnl_update_struct(fd, &s_stash);
 	}
-	if (endline_i == 0 && stashlen != 0)
-			return(gnl_get_line(&stash, &stashlen));
-	return (gnl_get_line(&stash, &endline_i));
+	return (gnl_get_line(&s_stash));
 }
 
 int	main(void)
@@ -117,7 +114,7 @@ int	main(void)
 	int		fd;
 	char	*gnl;
 
-	fd = open("./files/one_line_no_newline.txt", O_RDONLY);
+	fd = open("./files/file1.txt", O_RDONLY);
 
 	while (1)
 	{

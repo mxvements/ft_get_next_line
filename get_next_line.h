@@ -21,20 +21,22 @@
 # define BUFFER_SIZE 1
 # endif
 
-typedef static struct stash
+typedef struct stash
 {
 	int		stlen;
+	int		nwline_i;
 	ssize_t	readbytes;
 	char 	*stash;
 } t_stash;
 
 char	*gnl_memcpy(char **dst, char **src, size_t len);
 char	*gnl_strjoin(char **stash, char **buff);
+char	*gnl_read_file(int fd, t_stash *s_stash);
 int		gnl_strlen(char *s);
 int		gnl_strchr(char *stash, char c);
-char	*gnl_read_file(int fd, char **stash);
-char	*gnl_save_first_line(char *stash, int *linelen);
-char	*gnl_get_line(char **stash, int *linelen);
+char	*gnl_save_first_line(t_stash *s_stash, int linelen);
+char	*gnl_delete_first_line(t_stash *s_stash, int linelen);
+char	*gnl_get_line(t_stash *s_stash);
 char	*get_next_line(int fd);
 
 #endif

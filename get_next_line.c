@@ -69,7 +69,7 @@ char	*gnl_read_file(int fd, char **stash)
 		temp = (char *)malloc(sizeof(char) * (BUFFER_SIZE + 1));
 		if (!(temp))
 			return (free(buff), NULL);
-		temp = gnl_memcpy(&temp, &buff, BUFFER_SIZE);
+		temp = gnl_memcpy(&temp, &buff, readbytes);
 		return (free(buff), temp);
 	}
 	temp = gnl_strjoin(stash, &buff);
@@ -83,38 +83,46 @@ char	*get_next_line(int fd)
 {	
 	static char	*stash;
 	int			endline_i;
+	int			stashlen;
 
 	if (fd < 0 || fd > 256 || BUFFER_SIZE < 1)
 		return (free(stash), NULL);
 	if (stash) //if stash is not empty
 	{
 		endline_i = gnl_strchr(stash, '\n'); //and has a newlines
-		if (endline_i == 0)
+		stashlen = gnl_strlen(stash);
+		if (endline_i == 0 && stashlen == 0)
 			return (free(stash), NULL);
+		if (endline_i == 0 && stashlen != 0)
+			return(gnl_get_line(&stash, &stashlen));
 		return (gnl_get_line(&stash, &endline_i));
 	}
 	endline_i = 0;
-	while (endline_i == 0)
+	stashlen = 0;
+	while (stashlen == 0)
 	{
 		stash = gnl_read_file(fd, &stash);
 		if (!stash)
 			return (free(stash), NULL);
+		stashlen = gnl_strlen(stash);
 		endline_i = gnl_strchr(stash, '\n');
 	}
+	if (endline_i == 0 && stashlen != 0)
+			return(gnl_get_line(&stash, &stashlen));
 	return (gnl_get_line(&stash, &endline_i));
 }
-/*
+
 int	main(void)
 {
 	int		fd;
 	char	*gnl;
 
-	fd = open("./files/only_newline.txt", O_RDONLY);
+	fd = open("./files/one_line_no_newline.txt", O_RDONLY);
 
 	while (1)
 	{
 		gnl = get_next_line(fd);
-		printf("MAIN:\n%s", gnl);
+		printf("%s", gnl);
 		if (gnl == NULL)
 			break;
 		free(gnl);
@@ -123,4 +131,4 @@ int	main(void)
 	close(fd);
 	system("leaks -q a.out");
 	return (0);
-}*/
+}

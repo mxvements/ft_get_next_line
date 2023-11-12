@@ -65,6 +65,7 @@ char	*gnl_delete_first_line(char *stash, int *linelen)
 {
 	size_t	i;
 
+	//potencialmente, actualizar la longitud del stash
 	i = 0;
 	if (!stash || !linelen)
 		return (NULL);

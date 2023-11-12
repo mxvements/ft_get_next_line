@@ -18,8 +18,15 @@
 # include <stdlib.h>
 
 # ifndef BUFFER_SIZE
-# define BUFFER_SIZE 64
+# define BUFFER_SIZE 1
 # endif
+
+typedef static struct stash
+{
+	int		stlen;
+	ssize_t	readbytes;
+	char 	*stash;
+} t_stash;
 
 char	*gnl_memcpy(char **dst, char **src, size_t len);
 char	*gnl_strjoin(char **stash, char **buff);

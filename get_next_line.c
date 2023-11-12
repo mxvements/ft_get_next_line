@@ -55,22 +55,20 @@ char	*gnl_read_file(int fd, char **stash)
 {
 	char	*buff;
 	char	*temp;
-	size_t	readbytes;
+	ssize_t	readbytes;
 
 	buff = (char *) malloc(sizeof(char) * (BUFFER_SIZE + 1));
 	if (!buff)
 		return (NULL);
 	readbytes = read(fd, buff, BUFFER_SIZE);
-	buff[readbytes] = '\0';
-	if (readbytes > BUFFER_SIZE)
-		return (free(buff), buff = NULL, NULL);
-	if (readbytes == 0)
-		return (free(buff), buff = NULL, *stash);
+	buff[readbytes] = '\0'; //heap-buffer-overflow
+	if (readbytes <= 0)
+		return (free(buff), NULL);
 	if (!(*stash))
 	{
 		temp = (char *)malloc(sizeof(char) * (BUFFER_SIZE + 1));
 		if (!(temp))
-			return (NULL);
+			return (free(buff), NULL);
 		temp = gnl_memcpy(&temp, &buff, BUFFER_SIZE);
 		return (free(buff), temp);
 	}
@@ -84,39 +82,45 @@ char	*gnl_read_file(int fd, char **stash)
 char	*get_next_line(int fd)
 {	
 	static char	*stash;
-	char		*line;
 	int			endline_i;
 
-	if (fd < 0 || BUFFER_SIZE < 1)
-		return (stash = NULL, line = NULL, NULL);
-	line = NULL;
+	if (fd < 0 || fd > 256 || BUFFER_SIZE < 1)
+		return (free(stash), NULL);
+	if (stash) //if stash is not empty
+	{
+		endline_i = gnl_strchr(stash, '\n'); //and has a newlines
+		if (endline_i == 0)
+			return (free(stash), NULL);
+		return (gnl_get_line(&stash, &endline_i));
+	}
 	endline_i = 0;
 	while (endline_i == 0)
 	{
 		stash = gnl_read_file(fd, &stash);
+		if (!stash)
+			return (free(stash), NULL);
 		endline_i = gnl_strchr(stash, '\n');
 	}
-	if (endline_i != 0)
-		line = gnl_update_line(&stash, &endline_i);
-	return (line);
+	return (gnl_get_line(&stash, &endline_i));
 }
-
+/*
 int	main(void)
 {
 	int		fd;
 	char	*gnl;
 
-	fd = open("./file.txt", O_RDONLY);
-	gnl = get_next_line(fd);
-	printf("MAIN:\n%s", gnl);
-	free(gnl);
-	gnl = get_next_line(fd);
-	printf("MAIN:\n%s", gnl);
-	free(gnl);
-	gnl = get_next_line(fd);
-	printf("MAIN:\n%s", gnl);
-	free(gnl);
+	fd = open("./files/only_newline.txt", O_RDONLY);
+
+	while (1)
+	{
+		gnl = get_next_line(fd);
+		printf("MAIN:\n%s", gnl);
+		if (gnl == NULL)
+			break;
+		free(gnl);
+	}
+
 	close(fd);
 	system("leaks -q a.out");
 	return (0);
-}
+}*/

@@ -18,6 +18,8 @@ int	gnl_strlen(char *s)
 	size_t	i;
 
 	i = 0;
+	if (!s)
+		return (0);
 	while (s[i] != '\0')
 		i++;
 	return (i);
@@ -29,10 +31,12 @@ int	gnl_strchr(char *stash, char c)
 	size_t	i;
 
 	i = 0;
+	if (!stash)
+		return (0);
 	while (stash[i] != '\0')
 	{
 		if (stash[i] == c)
-			return (i);
+			return (++i);
 		i++;
 	}
 	return (0);
@@ -41,7 +45,7 @@ int	gnl_strchr(char *stash, char c)
 //3
 char	*gnl_save_first_line(char *stash, int *linelen)
 {
-	size_t	i;
+	ssize_t	i;
 	char	*line;
 
 	if (!stash || !linelen)
@@ -49,11 +53,10 @@ char	*gnl_save_first_line(char *stash, int *linelen)
 	line = (char *)malloc(sizeof(char) * (*linelen + 1));
 	if (!line)
 		return (NULL);
-	i = (size_t)(*linelen);
-	line[i] = '\0';
-	while (--i > 0)
+	i = -1;
+	line[*linelen] = '\0';
+	while (++i < *linelen)
 		line[i] = stash[i];
-	line[0] = stash[0];
 	return (line);
 }
 
@@ -76,22 +79,18 @@ char	*gnl_delete_first_line(char *stash, int *linelen)
 }
 
 //5
-char	*gnl_update_line(char **stash, int *endline_i)
+char	*gnl_get_line(char **stash, int *endline_i)
 {
 	char	*line;
-	int		linelen;
 
 	if (!stash || !endline_i)
 		return (NULL);
-	linelen = *endline_i + 1;
-	line = gnl_save_first_line(*stash, &linelen);
+	line = gnl_save_first_line(*stash, endline_i);
 	if (!line)
 		return (NULL);
-	//printf("LINE SAVED:\n%s\n", line);
-	*stash = gnl_delete_first_line(*stash, &linelen);
+	*stash = gnl_delete_first_line(*stash, endline_i);
 	if (!(*stash))
-		return (NULL);
-	//printf("STASH UPDATED:\n%s\n", *stash);
+		return (free(line), NULL);
 	return (line);
 }
 

@@ -73,8 +73,9 @@ char	*gnl_delete_first_line(t_stash *s_stash, int linelen)
 		s_stash->stash[i] = s_stash->stash[i + linelen];
 	while (s_stash->stash[i] != '\0')
 		s_stash->stash[i++] = '\0';
-	//update stlen
+	//update struct
 	s_stash->stlen = gnl_strlen(s_stash->stash);
+	s_stash->nwline_i = gnl_strchr(s_stash->stash, '\n');
 	return (s_stash->stash);
 }
 
@@ -86,7 +87,7 @@ char	*gnl_get_line(t_stash *s_stash)
 
 	if (!s_stash)
 		return (NULL);
-	if (s_stash->readbytes != 0)
+	if (s_stash->readbytes != 0) //include the option that maybe there is no newline
 		linelen = s_stash->nwline_i;
 	else
 		linelen = s_stash->stlen;

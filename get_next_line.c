@@ -66,7 +66,7 @@ char	*gnl_read_file(int fd, t_stash *s_stash)
 		//update STRUCT to know there was an error/i got to the end of file
 		return (free(buff), NULL);
 	}
-	if (!(*s_stash->stash))
+	if (!(		s_stash->stash))
 	{
 		temp = (char *)malloc(sizeof(char) * (BUFFER_SIZE + 1));
 		if (!(temp))

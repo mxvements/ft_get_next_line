@@ -22,12 +22,11 @@ int	main(void)
 	//fd = open("./files/one_line_no_newline.txt", O_RDONLY);
 	//fd = open("./files/only_newlines.txt", O_RDONLY);
 	fd = open("./files/42_nl.txt", O_RDONLY);
-
 	while (1)
 	{
 		gnl = get_next_line(fd);
 		if (gnl == NULL)
-			break;
+			break ;
 		printf("%s", gnl);
 		free(gnl);
 	}

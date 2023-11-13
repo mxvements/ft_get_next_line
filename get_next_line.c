@@ -62,7 +62,7 @@ char	*gnl_read_file(int fd, t_stash *s_stash)
 	if (s_stash->readbytes < 0)
 		return (free(buff), free(s_stash->stash), buff = NULL, NULL);
 	if (s_stash->readbytes == 0 || *buff == '\0')
-		return (free(buff), buff= NULL, s_stash->stash);
+		return (free(buff), buff = NULL, s_stash->stash);
 	buff[s_stash->readbytes] = '\0';
 	if (!(s_stash->stash))
 	{
@@ -76,6 +76,7 @@ char	*gnl_read_file(int fd, t_stash *s_stash)
 	free(s_stash->stash);
 	return (free(buff), buff = NULL, temp);
 }
+
 //4
 void	gnl_update_struct(int fd, t_stash *s_stash)
 {
@@ -86,6 +87,7 @@ void	gnl_update_struct(int fd, t_stash *s_stash)
 	s_stash->stlen = gnl_strlen(s_stash->stash);
 	return ;
 }
+
 //5
 char	*get_next_line(int fd)
 {	
@@ -100,7 +102,7 @@ char	*get_next_line(int fd)
 		if (!s_stash.stash)
 			return (NULL);
 		if (s_stash.readbytes < BUFFER_SIZE) //reached endfile
-			break;
+			break ;
 	}
 	line = gnl_get_line(&s_stash);
 	s_stash.nwline_i = gnl_strchr(s_stash.stash, '\n');

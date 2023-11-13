@@ -18,7 +18,7 @@
 # include <stdlib.h>
 
 # ifndef BUFFER_SIZE
-# define BUFFER_SIZE 42
+#  define BUFFER_SIZE 42
 # endif
 
 typedef struct stash
@@ -26,8 +26,8 @@ typedef struct stash
 	int		stlen;
 	int		nwline_i;
 	ssize_t	readbytes;
-	char 	*stash;
-} t_stash;
+	char	*stash;
+}	t_stash;
 
 char	*gnl_memcpy(char **dst, char **src, size_t len);
 char	*gnl_strjoin(char **stash, char **buff);

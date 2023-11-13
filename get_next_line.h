@@ -18,7 +18,7 @@
 # include <stdlib.h>
 
 # ifndef BUFFER_SIZE
-# define BUFFER_SIZE 26
+# define BUFFER_SIZE 42
 # endif
 
 typedef struct stash

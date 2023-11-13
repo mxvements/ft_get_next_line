@@ -52,7 +52,7 @@ char	*gnl_save_first_line(t_stash *s_stash, int linelen)
 		return (NULL);
 	line = (char *)malloc(sizeof(char) * (linelen + 1));
 	if (!line)
-		return (NULL);
+		return (free(s_stash->stash), s_stash->stash = NULL, NULL);
 	i = -1;
 	line[linelen] = '\0';
 	while (++i < linelen)

@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 
 #include "get_next_line.h"
-#include <fcntl.h>
 
 //1
 char	*gnl_memcpy(char **dst, char **src, size_t len)
@@ -42,10 +41,10 @@ char	*gnl_strjoin(char **stash, char **buff)
 	temp = (char *)malloc(sizeof(char) + (BUFFER_SIZE + len + 1));
 	if (!(temp))
 		return (NULL);
-	while (stash[0][++i] != '\0')
-		temp[i] = stash[0][i];
+	while ((*stash)[++i] != '\0')
+		temp[i] = (*stash)[i];
 	while (buff[0][++j] != '\0')
-		temp[i + j] = buff[0][j];
+		temp[i + j] = (*buff)[j];
 	temp[i + j] = '\0';
 	return (temp);
 }
@@ -58,10 +57,10 @@ char	*gnl_read_file(int fd, t_stash *s_stash)
 
 	buff = (char *) malloc(sizeof(char) * (BUFFER_SIZE + 1));
 	if (!buff)
-		return (NULL);
+		return (free(s_stash->stash), NULL);
 	s_stash->readbytes = read(fd, buff, BUFFER_SIZE);
 	if (s_stash->readbytes < 0)
-		return (free(buff), buff = NULL, NULL);
+		return (free(buff), free(s_stash->stash), buff = NULL, NULL);
 	if (s_stash->readbytes == 0 || *buff == '\0')
 		return (free(buff), buff= NULL, s_stash->stash);
 	buff[s_stash->readbytes] = '\0';
@@ -69,7 +68,7 @@ char	*gnl_read_file(int fd, t_stash *s_stash)
 	{
 		temp = (char *)malloc(sizeof(char) * (BUFFER_SIZE + 1));
 		if (!(temp))
-			return (free(buff), NULL);
+			return (free(buff), buff = NULL, NULL);
 		temp = gnl_memcpy(&temp, &buff, s_stash->readbytes);
 		return (free(buff), buff = NULL, temp);
 	}
@@ -104,35 +103,12 @@ char	*get_next_line(int fd)
 			break;
 	}
 	line = gnl_get_line(&s_stash);
-	gnl_update_struct(fd, &s_stash);
+	s_stash.nwline_i = gnl_strchr(s_stash.stash, '\n');
+	s_stash.stlen = gnl_strlen(s_stash.stash);
 	if (s_stash.stlen == 0)
 	{
 		free(s_stash.stash);
 		s_stash.stash = NULL;
 	}
 	return (line);
-}
-
-int	main(void)
-{
-	int		fd;
-	char	*gnl;
-
-	//fd = open("./files/file1.txt", O_RDONLY);
-	fd = open("./files/one_line_no_newline.txt", O_RDONLY);
-	//fd = open("./files/only_newlines.txt", O_RDONLY);
-
-	while (1)
-	{
-		gnl = get_next_line(fd);
-		printf("%s", gnl);
-		if (gnl == NULL)
-			break;
-		free(gnl);
-	}
-
-	close(fd);
-	
-	system("leaks -q a.out");
-	return (0);
 }

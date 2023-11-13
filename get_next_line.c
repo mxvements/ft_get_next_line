@@ -60,23 +60,22 @@ char	*gnl_read_file(int fd, t_stash *s_stash)
 	if (!buff)
 		return (NULL);
 	s_stash->readbytes = read(fd, buff, BUFFER_SIZE);
-	buff[s_stash->readbytes] = '\0'; //heap-buffer-overflow
-	if (s_stash->readbytes <= 0)
-	{
-		//update STRUCT to know there was an error/i got to the end of file
-		return (free(buff), NULL);
-	}
-	if (!(		s_stash->stash))
+	if (s_stash->readbytes < 0)
+		return (free(buff), buff = NULL, NULL);
+	if (s_stash->readbytes == 0 || *buff == '\0')
+		return (free(buff), buff= NULL, s_stash->stash);
+	buff[s_stash->readbytes] = '\0';
+	if (!(s_stash->stash))
 	{
 		temp = (char *)malloc(sizeof(char) * (BUFFER_SIZE + 1));
 		if (!(temp))
 			return (free(buff), NULL);
 		temp = gnl_memcpy(&temp, &buff, s_stash->readbytes);
-		return (free(buff), temp);
+		return (free(buff), buff = NULL, temp);
 	}
 	temp = gnl_strjoin(&s_stash->stash, &buff);
 	free(s_stash->stash);
-	return (free(buff), temp);
+	return (free(buff), buff = NULL, temp);
 }
 //4
 void	gnl_update_struct(int fd, t_stash *s_stash)
@@ -92,21 +91,26 @@ void	gnl_update_struct(int fd, t_stash *s_stash)
 char	*get_next_line(int fd)
 {	
 	static t_stash	s_stash;
+	char			*line;
 
 	if (fd < 0 || fd > 256 || BUFFER_SIZE < 1)
-		return (NULL); //probably, free s_stash.stash
-	if (s_stash.stash) //if stash is not empty
-	{
-		//TO BE UPDATED WITH THE STRUCT
-		//s_stash.nwline_i = gnl_strchr(s_stash.stash, '\n'); //and has a newlines //UPDATE STRUCT
-		//s_stash.stlen = gnl_strlen(s_stash.stash);//this should already be updated
-		return (gnl_get_line(&s_stash));
-	}
-	while (!s_stash.stash)
+		return (NULL);
+	while (s_stash.nwline_i == 0)
 	{
 		gnl_update_struct(fd, &s_stash);
+		if (!s_stash.stash)
+			return (NULL);
+		if (s_stash.readbytes < BUFFER_SIZE) //reached endfile
+			break;
 	}
-	return (gnl_get_line(&s_stash));
+	line = gnl_get_line(&s_stash);
+	gnl_update_struct(fd, &s_stash);
+	if (s_stash.stlen == 0)
+	{
+		free(s_stash.stash);
+		s_stash.stash = NULL;
+	}
+	return (line);
 }
 
 int	main(void)
@@ -114,7 +118,9 @@ int	main(void)
 	int		fd;
 	char	*gnl;
 
-	fd = open("./files/file1.txt", O_RDONLY);
+	//fd = open("./files/file1.txt", O_RDONLY);
+	fd = open("./files/one_line_no_newline.txt", O_RDONLY);
+	//fd = open("./files/only_newlines.txt", O_RDONLY);
 
 	while (1)
 	{
@@ -126,6 +132,7 @@ int	main(void)
 	}
 
 	close(fd);
+	
 	system("leaks -q a.out");
 	return (0);
 }

@@ -18,7 +18,7 @@
 # include <stdlib.h>
 
 # ifndef BUFFER_SIZE
-# define BUFFER_SIZE 64
+# define BUFFER_SIZE 26
 # endif
 
 typedef struct stash
@@ -32,11 +32,12 @@ typedef struct stash
 char	*gnl_memcpy(char **dst, char **src, size_t len);
 char	*gnl_strjoin(char **stash, char **buff);
 char	*gnl_read_file(int fd, t_stash *s_stash);
+void	gnl_update_struct(int fd, t_stash *s_stash);
+char	*get_next_line(int fd);
 int		gnl_strlen(char *s);
 int		gnl_strchr(char *stash, char c);
 char	*gnl_save_first_line(t_stash *s_stash, int linelen);
 char	*gnl_delete_first_line(t_stash *s_stash, int linelen);
 char	*gnl_get_line(t_stash *s_stash);
-char	*get_next_line(int fd);
 
 #endif

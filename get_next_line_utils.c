@@ -12,7 +12,12 @@
 
 #include "get_next_line.h"
 
-//1
+/**
+ * @brief 
+ * 
+ * @param s 
+ * @return int 
+ */
 int	gnl_strlen(char *s)
 {
 	size_t	i;
@@ -42,7 +47,13 @@ int	gnl_strchr(char *stash, char c)
 	return (0);
 }
 
-//3
+/**
+ * @brief 
+ * 
+ * @param s_stash 
+ * @param linelen 
+ * @return char* 
+ */
 char	*gnl_save_first_line(t_stash *s_stash, int linelen)
 {
 	ssize_t	i;
@@ -60,7 +71,13 @@ char	*gnl_save_first_line(t_stash *s_stash, int linelen)
 	return (line);
 }
 
-//4
+/**
+ * @brief 
+ * 
+ * @param s_stash 
+ * @param linelen 
+ * @return char* 
+ */
 char	*gnl_delete_first_line(t_stash *s_stash, int linelen)
 {
 	ssize_t	i;
@@ -76,7 +93,12 @@ char	*gnl_delete_first_line(t_stash *s_stash, int linelen)
 	return (s_stash->stash);
 }
 
-//5
+/**
+ * @brief 
+ * 
+ * @param s_stash 
+ * @return char* 
+ */
 char	*gnl_get_line(t_stash *s_stash)
 {
 	char	*line;

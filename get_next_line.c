@@ -12,7 +12,16 @@
 
 #include "get_next_line.h"
 
-//1
+/** char *gnl_memcpy(char **dst, char **src, size_t len)
+ * @brief Function to copy memory from (*src) to (*dst) len size bytes.
+ * In contrast to the function on the ft_libc, gnl_memcpy takes pointers to 
+ * strings (char *) to pass them by reference.
+ * Error handling: no protection.
+ * @param dst, char **, pointer to destination string (char *)
+ * @param src , char **, pointer to source string (char *)
+ * @param len, len size bytes to copy from src to dst
+ * @return char*, string result, in this case, *dst.
+ */
 char	*gnl_memcpy(char **dst, char **src, size_t len)
 {
 	size_t	i;
@@ -27,8 +36,18 @@ char	*gnl_memcpy(char **dst, char **src, size_t len)
 	return (*dst);
 }
 
-//2
-char	*gnl_strjoin(char **stash, char **buff)
+/** char *gnl_strjoin(char **s1, char **s2)
+ * @brief Function to join two strings in a new string, using memory allocation.
+ * This imlementation of strjoin, considers s1 the stash, which len we need to
+ * calculate, and s2 the read buffer of the file, which len we already know
+ * (it's BUFFER_SIZE). It also takes the pointer to each string (char **), to 
+ * pass them by reference.
+ * Error handling: malloc protection, reuturn NULL.
+ * @param s1, char **, pointer to stash (char *)
+ * @param s2, char **, pointer to buff (char *)
+ * @return char*, char *, new string
+ */
+char	*gnl_strjoin(char **s1, char **s2)
 {
 	int		i;
 	int		j;
@@ -37,19 +56,34 @@ char	*gnl_strjoin(char **stash, char **buff)
 
 	i = -1;
 	j = -1;
-	len = gnl_strlen(*stash);
+	len = gnl_strlen(*s1);
 	temp = (char *)malloc(sizeof(char) + (BUFFER_SIZE + len + 1));
 	if (!(temp))
 		return (NULL);
-	while ((*stash)[++i] != '\0')
-		temp[i] = (*stash)[i];
-	while (buff[0][++j] != '\0')
-		temp[i + j] = (*buff)[j];
+	while ((*s1)[++i] != '\0')
+		temp[i] = (*s1)[i];
+	while (s2[0][++j] != '\0')
+		temp[i + j] = (*s2)[j];
 	temp[i + j] = '\0';
 	return (temp);
 }
 
-//3
+/** char *gnl_read_file(int fd, t_stash *s_stash)
+ * @brief Function to read the file from which to get the line.
+ * On the first read (stash empty):
+ * 		returns a string copied from the buffer string
+ * In case the stash is not empty:
+ * 		returns a string that concatenates the existing stash and the buffer
+ *		(freeing the existing stash before return)
+ * Error handling:
+ * 		Malloc protection on the buffer string for the file read
+ * 		In case read error, returns NULL and free stash and buff
+ *		In case read = 0 bytes or reads only a null, free buff and return
+ *		existing stash
+ * @param fd, file descriptor of the file to read
+ * @param s_stash, pointer to the static struct
+ * @return char*, returns the joined/copied string
+ */
 char	*gnl_read_file(int fd, t_stash *s_stash)
 {
 	char	*buff;
@@ -77,7 +111,12 @@ char	*gnl_read_file(int fd, t_stash *s_stash)
 	return (free(buff), buff = NULL, temp);
 }
 
-//4
+/** void gnl_update_struct(int fd, t_stash *stash)
+ * @brief 
+ * 
+ * @param fd 
+ * @param s_stash 
+ */
 void	gnl_update_struct(int fd, t_stash *s_stash)
 {
 	s_stash->stash = gnl_read_file(fd, s_stash);
@@ -88,7 +127,12 @@ void	gnl_update_struct(int fd, t_stash *s_stash)
 	return ;
 }
 
-//5
+/** char *get_next_line(int fd)
+ * @brief Get the next line object
+ * 
+ * @param fd 
+ * @return char* 
+ */
 char	*get_next_line(int fd)
 {	
 	static t_stash	s_stash;

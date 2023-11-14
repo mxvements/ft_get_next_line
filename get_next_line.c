@@ -162,6 +162,8 @@ char	*get_next_line(int fd)
 			break ;
 	}
 	line = gnl_get_line(&s_stash);
+	s_stash.nwline_i = gnl_strchr(s_stash.stash, '\n');
+	s_stash.stlen = gnl_strlen(s_stash.stash);
 	if (s_stash.stlen == 0)
 	{
 		free(s_stash.stash);

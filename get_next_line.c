@@ -94,7 +94,7 @@ char	*get_next_line(int fd)
 	static t_stash	s_stash;
 	char			*line;
 
-	if (fd < 0 || fd > 256 || BUFFER_SIZE < 1)
+	if (fd < 0 || fd > OPEN_MAX || BUFFER_SIZE < 1)
 		return (NULL);
 	while (s_stash.nwline_i == 0)
 	{

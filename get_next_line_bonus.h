@@ -22,7 +22,6 @@
 #  define BUFFER_SIZE 42
 # endif
 
-
 typedef struct stash
 {
 	int		stlen;

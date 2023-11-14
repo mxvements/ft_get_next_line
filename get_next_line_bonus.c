@@ -24,7 +24,7 @@ char	*gnl_memcpy(char **dst, char **src, size_t len)
 		i++;
 	}
 	dst[0][i] = '\0';
-	return (*dst);	
+	return (*dst);
 }
 
 //2
@@ -101,7 +101,7 @@ char	*get_next_line(int fd)
 		gnl_update_struct(fd, &s_stash[fd]);
 		if (!s_stash[fd].stash)
 			return (NULL);
-		if (s_stash[fd].readbytes < BUFFER_SIZE) //reached endfile
+		if (s_stash[fd].readbytes < BUFFER_SIZE)
 			break ;
 	}
 	line = gnl_get_line(&s_stash[fd]);

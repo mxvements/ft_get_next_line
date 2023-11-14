@@ -67,7 +67,6 @@ char	*gnl_delete_first_line(t_stash *s_stash, int linelen)
 
 	if (!s_stash)
 		return (NULL);
-	//mem move
 	i = -1;
 	while (s_stash->stash[++i + linelen] != '\0')
 		s_stash->stash[i] = s_stash->stash[i + linelen];

@@ -135,7 +135,7 @@ char	*gnl_get_line(t_stash *s_stash)
 	if (!line)
 		return (NULL);
 	s_stash->stash = gnl_delete_first_line(s_stash, linelen);
-	s_stash.nwline_i = gnl_strchr(s_stash.stash, '\n');
-	s_stash.stlen = gnl_strlen(s_stash.stash);
+	s_stash->nwline_i = gnl_strchr(s_stash->stash, '\n');
+	s_stash->stlen = gnl_strlen(s_stash->stash);
 	return (line);
 }

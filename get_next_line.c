@@ -77,6 +77,7 @@ char	*gnl_strjoin(char **s1, char **s2)
  *		(freeing the existing stash before return)
  * Error handling:
  * 		Malloc protection on the buffer string for the file read
+ * 		Malloc protection on temp string when stash is null
  * 		In case read error, returns NULL and free stash and buff
  *		In case read = 0 bytes or reads only a null, free buff and return
  *		existing stash
@@ -112,8 +113,14 @@ char	*gnl_read_file(int fd, t_stash *s_stash)
 }
 
 /** void gnl_update_struct(int fd, t_stash *stash)
- * @brief 
- * 
+ * @brief Function to update the static struct which contains:
+ * - char * stash, withlll the remaining data of the file after returning the 1st
+ * line
+ * - stlen, stash length
+ * - nwline_i, line length after '\n'
+ * - readbytes, amount of bytes read, if < BUFFER_SIZE, reached end of file
+ * Error handling:
+ * 		if s_stash.stash is null, returns null
  * @param fd 
  * @param s_stash 
  */
@@ -128,10 +135,16 @@ void	gnl_update_struct(int fd, t_stash *s_stash)
 }
 
 /** char *get_next_line(int fd)
- * @brief Get the next line object
- * 
- * @param fd 
- * @return char* 
+ * @brief Get the next line from a file (fd).
+ * When there is a newline on the stash
+ *		get the first line on the stash and update it
+ * When there is not newline
+ * 		update the struct and read the file to update the stash until there is
+ * 		a newline
+ * Error handling:
+ *		fd and BUFFER_SIZE protected
+ * @param fd, file descriptor of the file to read
+ * @return char*, line to return
  */
 char	*get_next_line(int fd)
 {	
@@ -145,12 +158,10 @@ char	*get_next_line(int fd)
 		gnl_update_struct(fd, &s_stash);
 		if (!s_stash.stash)
 			return (NULL);
-		if (s_stash.readbytes < BUFFER_SIZE) //reached endfile
+		if (s_stash.readbytes < BUFFER_SIZE)
 			break ;
 	}
 	line = gnl_get_line(&s_stash);
-	s_stash.nwline_i = gnl_strchr(s_stash.stash, '\n');
-	s_stash.stlen = gnl_strlen(s_stash.stash);
 	if (s_stash.stlen == 0)
 	{
 		free(s_stash.stash);

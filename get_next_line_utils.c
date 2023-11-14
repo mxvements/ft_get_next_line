@@ -12,11 +12,10 @@
 
 #include "get_next_line.h"
 
-/**
- * @brief 
- * 
- * @param s 
- * @return int 
+/** int gnl_strlen(char *s)
+ * @brief Function to get the length of a string. Iterates until it finds a \0
+ * @param s, string to get the length
+ * @return int, length of the str
  */
 int	gnl_strlen(char *s)
 {
@@ -30,7 +29,17 @@ int	gnl_strlen(char *s)
 	return (i);
 }
 
-//2
+/** int gnl_strchr(char *stash, char c)
+ * @brief Function to find the 1st occurrence of a char c in string stash.
+ * Used to find the first '\n' on the stash. Returns the lgenth of the line,
+ * (index + 1)
+ * Error handling
+ * 		char *stash protected
+ * 		returns 0 when c not present
+ * @param stash, char *, string to read
+ * @param c, char to find
+ * @return int, (index + 1) when find c, 0 when it's not present
+ */
 int	gnl_strchr(char *stash, char c)
 {
 	size_t	i;
@@ -47,12 +56,15 @@ int	gnl_strchr(char *stash, char c)
 	return (0);
 }
 
-/**
- * @brief 
- * 
- * @param s_stash 
- * @param linelen 
- * @return char* 
+/** char *gnl_save_first_line(t_stash *s_stash, int linelen)
+ * @brief Function to return the first line on the s_stash.stash.
+ * Uses malloc and linelen to allocate the space for the new string, line.
+ * Error handling:
+ * 		Malloc protection on char *line.
+ *		When s_stash.stash is null, returns nulll
+ * @param s_stash, pointer to the static struct which has the char *stash
+ * @param linelen, length of line to be returned
+ * @return char*, 1st line on stash
  */
 char	*gnl_save_first_line(t_stash *s_stash, int linelen)
 {
@@ -71,12 +83,15 @@ char	*gnl_save_first_line(t_stash *s_stash, int linelen)
 	return (line);
 }
 
-/**
- * @brief 
- * 
- * @param s_stash 
- * @param linelen 
- * @return char* 
+/** char *gnl_delete_first_line(t_stash *s_stash, int linelen)
+ * @brief Function to delete the first line on s_stash.stash. It works as
+ * memmove. After moving the memory from (i + linelen) to (i), changes the 
+ * remainng chars on s_stash.stash to null.
+ * Error handling:
+ *		when s_stash is null, returns null
+ * @param s_stash, poiter to struct to update
+ * @param linelen, size of memory to move
+ * @return char*, s_stash.stash updated
  */
 char	*gnl_delete_first_line(t_stash *s_stash, int linelen)
 {
@@ -92,11 +107,16 @@ char	*gnl_delete_first_line(t_stash *s_stash, int linelen)
 	return (s_stash->stash);
 }
 
-/**
- * @brief 
- * 
- * @param s_stash 
- * @return char* 
+/** char *gnl_get_line(t_stash *s_stash)
+ * @brief Function that returns the next line on s_stash.stash and updates
+ * s_stash.nwline_i and s_stash.slen
+ * In orderr to call gnl_save_new_line() and gnl_delete_new_line(), it gets
+ * the linelen considering if there's a newline or not (end of file)
+ * Error handling:
+ *		linelen protected
+ *		line returned from save_first_line() protected
+ * @param s_stash, pointer to static struct
+ * @return char*, line to be returned
  */
 char	*gnl_get_line(t_stash *s_stash)
 {
@@ -115,5 +135,7 @@ char	*gnl_get_line(t_stash *s_stash)
 	if (!line)
 		return (NULL);
 	s_stash->stash = gnl_delete_first_line(s_stash, linelen);
+	s_stash.nwline_i = gnl_strchr(s_stash.stash, '\n');
+	s_stash.stlen = gnl_strlen(s_stash.stash);
 	return (line);
 }

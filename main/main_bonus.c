@@ -10,12 +10,12 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line_bonus.h"
+#include "../get_next_line_bonus.h"
 #include <fcntl.h>
 
 int	main(void)
 {
-	int		fd[256];
+	int		fd[4];
 	int		i;
 	char	*gnl;
 
@@ -26,7 +26,7 @@ int	main(void)
 	while (1)
 	{
 		i = 0;
-		while (fd[i] != -1)
+		while (i < 4)
 		{
 			gnl = get_next_line(fd[i]);
 			if (gnl == NULL)

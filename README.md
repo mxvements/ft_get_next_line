@@ -45,6 +45,15 @@ This project will not only allow you to add a very convenient function to your c
 
 # Notes
 
+## Note on the file descriptors
+File descritpors (*fd*) are non-negative ints that act as an abstract handle to 'Files' or I/O resources (like pipes, sockets or data streams). These descritors help us interact with these I/O resources and make working with them very easy. The I/O system is visible to a user process as a stream of bytes (I/O stream). A unix process uses descritors (small unsigned ints) to refer to I/O streams. The system calls related to the I/O operations take a descritpr as an argument.
+
+Valid file descriptor ranges from 0 to OPEN_MAX on limits.h. Kernel assigns descriptors for std input (0), ouput (1), and error (2) on the file descritor table (system-wide table of files opened by all processes). If a file open is not successful, fd return -1.
+
+- To interact wit files in C, we use functions llike open (man 2 open) which return aa file descriptor. The fd is then used in subsequent operations tto read from or write to the file.
+- Once a file is open, we use read and write function to use the fd to specify the file or I/O resource.
+- After we're done using a file or I/O resource, it's important to close it using close function.
+
 ## Notes on object-like macros
 
 An object-like macro is a simple identifier which will be replaced by a code fragment. It is called object-like beacuse it looks like a data object in code that uses it. They are most commonly used to give symbolic name to numeric constants.
@@ -59,3 +68,11 @@ You create macros with the `#define` directive, followed by the name of the macr
  foo = (char *) malloc (1024) //C preprocessor interpretation
  ```
 source: [https://gcc.gnu.org/onlinedocs/cpp/Object-like-Macros.html] 
+
+## Notes on static variables
+
+The `static` keyword is used on variables or functions to determine the visibility inside files or functions. In this project, the focus on using `static vairables`.
+ - For global variables, `static`is used to declare a var at the file scope (internal linkage), it limtis its visibility if thar var to the file where it's declared. The var cannot be accesed from other files using the `extern` keyword.
+ - When `static` is used to declare a var inside a function, it changed the storage duration of that variable. Instead of being allocated on the stack and having a local lifetime, the variable is allocated in the data segment of the program, giving a lifetime throughout the entire program exection. The variabl retains its value between function calls.
+
+ # General schema of the code

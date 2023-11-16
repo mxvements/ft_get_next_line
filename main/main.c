@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "../get_next_line.h"
 #include <fcntl.h>
 
 int	main(void)
@@ -18,10 +18,13 @@ int	main(void)
 	int		fd;
 	char	*gnl;
 
-	//fd = open("./files/file1.txt", O_RDONLY);
+	fd = open("./files/file1.txt", O_RDONLY);
 	//fd = open("./files/one_line_no_newline.txt", O_RDONLY);
 	//fd = open("./files/only_newlines.txt", O_RDONLY);
-	fd = open("./files/42_nl.txt", O_RDONLY);
+	//fd = open("./files/42_nl.txt", O_RDONLY);
+	//fd = 0;
+	//fd = -1;
+	//fd = 50;
 	while (1)
 	{
 		gnl = get_next_line(fd);

@@ -12,30 +12,6 @@
 
 #include "get_next_line.h"
 
-/** char *gnl_memcpy(char **dst, char **src, size_t len)
- * @brief Function to copy memory from (*src) to (*dst) len size bytes.
- * In contrast to the function on the ft_libc, gnl_memcpy takes pointers to 
- * strings (char *) to pass them by reference.
- * Error handling: no protection.
- * @param dst, char **, pointer to destination string (char *)
- * @param src , char **, pointer to source string (char *)
- * @param len, len size bytes to copy from src to dst
- * @return char*, string result, in this case, *dst.
- */
-char	*gnl_memcpy(char **dst, char **src, size_t len)
-{
-	size_t	i;
-
-	i = 0;
-	while (i < len)
-	{
-		dst[0][i] = src[0][i];
-		i++;
-	}
-	dst[0][i] = '\0';
-	return (*dst);
-}
-
 /** char *gnl_strjoin(char **s1, char **s2)
  * @brief Function to join two strings in a new string, using memory allocation.
  * This imlementation of strjoin, considers s1 the stash, which len we need to
@@ -47,7 +23,7 @@ char	*gnl_memcpy(char **dst, char **src, size_t len)
  * @param s2, char **, pointer to buff (char *)
  * @return char*, char *, new string
  */
-char	*gnl_strjoin(char **s1, char **s2)
+char	*gnl_strjoin(char *s1, char *s2)
 {
 	int		i;
 	int		j;
@@ -56,14 +32,14 @@ char	*gnl_strjoin(char **s1, char **s2)
 
 	i = -1;
 	j = -1;
-	len = gnl_strlen(*s1);
+	len = gnl_strlen(s1);
 	temp = (char *)malloc(sizeof(char) + (BUFFER_SIZE + len + 1));
 	if (!(temp))
 		return (NULL);
-	while ((*s1)[++i] != '\0')
-		temp[i] = (*s1)[i];
-	while (s2[0][++j] != '\0')
-		temp[i + j] = (*s2)[j];
+	while (s1[++i] != '\0')
+		temp[i] = s1[i];
+	while (s2[++j] != '\0')
+		temp[i + j] = s2[j];
 	temp[i + j] = '\0';
 	return (temp);
 }
@@ -100,14 +76,8 @@ char	*gnl_read_file(int fd, t_stash *s_stash)
 		return (free(buff), buff = NULL, s_stash->stash);
 	buff[s_stash->readbytes] = '\0';
 	if (!(s_stash->stash))
-	{
-		temp = (char *)malloc(sizeof(char) * (BUFFER_SIZE + 1));
-		if (!(temp))
-			return (free(buff), buff = NULL, NULL);
-		temp = gnl_memcpy(&temp, &buff, s_stash->readbytes);
-		return (free(buff), buff = NULL, temp);
-	}
-	temp = gnl_strjoin(&s_stash->stash, &buff);
+		return (buff);
+	temp = gnl_strjoin(s_stash->stash, buff);
 	free(s_stash->stash);
 	return (free(buff), buff = NULL, temp);
 }

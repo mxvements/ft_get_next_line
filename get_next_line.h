@@ -30,8 +30,7 @@ typedef struct stash
 	char	*stash;
 }	t_stash;
 
-char	*gnl_memcpy(char **dst, char **src, size_t len);
-char	*gnl_strjoin(char **s1, char **s2);
+char	*gnl_strjoin(char *s1, char *s2);
 char	*gnl_read_file(int fd, t_stash *s_stash);
 void	gnl_update_struct(int fd, t_stash *s_stash);
 char	*get_next_line(int fd);

@@ -1,7 +1,7 @@
 <div align="center">
     <img src="https://img.shields.io/badge/status-finished-success?color=00ABAD&style=flat-square" />
     <img src="https://img.shields.io/badge/started-04%20%2F%2011%20%2F%202023-success?color=00ABAD&style=flat-square" />
-    <img src="https://img.shields.io/badge/score--%20%2F%20100-success?color=00ABAD&style=flat-square" />
+    <img src="https://img.shields.io/badge/score-125%20%2F%20100-success?color=00ABAD&style=flat-square" />
     <img src="https://img.shields.io/github/languages/top/mxvements/ft_get_next_line?color=00ABAD&style=flat-square" />
     <img src="https://img.shields.io/github/last-commit/mxvements/ft_get_next_line?color=00ABAD&style=flat-square" />
     <br>
@@ -72,7 +72,118 @@ source: [https://gcc.gnu.org/onlinedocs/cpp/Object-like-Macros.html]
 ## Notes on static variables
 
 The `static` keyword is used on variables or functions to determine the visibility inside files or functions. In this project, the focus on using `static vairables`.
- - For global variables, `static`is used to declare a var at the file scope (internal linkage), it limtis its visibility if thar var to the file where it's declared. The var cannot be accesed from other files using the `extern` keyword.
+ - For global variables, `static` is used to declare a var at the file scope (internal linkage), it limtis its visibility if thar var to the file where it's declared. The var cannot be accesed from other files using the `extern` keyword.
  - When `static` is used to declare a var inside a function, it changed the storage duration of that variable. Instead of being allocated on the stack and having a local lifetime, the variable is allocated in the data segment of the program, giving a lifetime throughout the entire program exection. The variabl retains its value between function calls.
 
  # General schema of the code
+ 1 - the main structre of the code consists on:
+
+* read the file and store the content read on a static (char *) variable, a stash, we are going to update everytime we read the file
+* when a newline is found, save the first line read on a (char *) variable, the line we need to return on the get_next_line function
+* delete the first line on the stash to update it
+
+2 - in order to know when to stop reading, and manage the end of file, my solution uses a structure that allocates:
+
+* (char *)stash, the pointer to the joined strings of the former stash and the new read buffer
+* (int) new line index, to know when a complete line is found
+* (int) bytes read on the last read() call, when is smaller than the BUFFER_SIZE provided by the macro, then we've reached the end of file
+* (int) string len, length of stash, to know the length of the last line o a file, when no newline is needed
+
+```C
+typedef struct stash
+{
+	int		stlen;
+	int		nwline_i;
+	ssize_t	readbytes;
+	char	*stash;
+}	t_stash;
+```
+
+### Bear in mind...
+
+I'm aware that more efficient code can be implemented (e.g only getting the length of the stash when initizalizing the length of the line to be returned), this is the code I submitted to the vogsphere.
+
+## gnl_schema
+
+General schema of the code without the protection of variables and mallocs, and w/o all axiliary functions:
+
+1 - get_next_line()
+```C
+char	*get_next_line(int fd)
+{	
+	static t_stash	s_stash;
+	char			*line;
+
+	//protection of fd and BUFFER_SIZE, provided in compilation
+	while (s_stash.nwline_i == 0)
+	{
+		gnl_update_struct(fd, &s_stash);
+		//protection of s_stash.stash, to handle errors on gnl_update_struct()
+		if (s_stash.readbytes < BUFFER_SIZE)
+			break ;
+			//break loop when newline found or reached the end of file
+			//it could also be chequed when s_stash.stlen == 0, checking the readbytes we avoid the last read call
+	}
+	line = gnl_get_line(&s_stash);
+	//after getting the line, we need to update the struct 
+	//if stash.stlen == 0 we've reached the end of file, so we need to free s_stash.stash at the end
+	return (line);
+}
+```
+2 - gnl_update_struct()
+```C
+void	gnl_update_struct(int fd, t_stash *s_stash)
+{
+	s_stash->stash = gnl_read_file(fd, s_stash);//update the char *stash reading the file, use strjoin when stash is not empty. When calling this function, the s_stash.readbytes will be updated.
+	//protection of s_stash.stash, to handle errors on the read function
+	s_stash->nwline_i = gnl_strchr(s_stash->stash, '\n'); //is there a newline?
+	s_stash->stlen = gnl_strlen(s_stash->stash); //stash len, useful for the end of file
+	return ;
+}
+```
+
+3 - gnl_get_line()
+```C
+char	*gnl_get_line(t_stash *s_stash)
+{
+	char	*line;
+	int		linelen;
+
+	//setting the length of the line we need to return, if it's not the end of file, then we set the index of the newline + 1 
+	if (s_stash->nwline_i != 0)
+		linelen = (s_stash->nwline_i) + 1;
+	else
+		linelen = s_stash->stlen;
+	line = gnl_save_first_line(s_stash, linelen);
+	//protection of line to handle errors on gnl_save_first_line()
+	s_stash->stash = gnl_delete_first_line(s_stash, linelen);//memmove from stash[i + linelen] to stash[i], setting remaining memory to null
+	return (line);
+}
+```
+
+# Other
+
+## Norminete
+At 42 School, it is expected that almost every project is written in accordance with the Norm, which is the coding standard of the school.
+
+<a href="https://github.com/42School/norminette">
+<a>Norminette's repository</a>
+
+```
+- No for, do...while, switch, case, goto, ternary operators and variable-length arrays are allowed
+- Each function must be a maximum of 25 lines, not counting the function's curly brackets
+- Each line must be at most 80 columns wide, comments included
+- A function can take 4 named parameters maximum
+- No assigns and declarations in the same line (unless static or const)
+- You can't declare more than 5 variables per function
+- ...
+```
+## Aknowledgments
+- [Luiz-Pastor](https://github.com/Luiz-Pastor/get_next_line) helped me understand what gnl needed to do at the start. 
+
+# Contact
+```
+luciama2@student.42madrid.com
+```
+# License
+[MIT License](https://github.com/mxvements/ft_license/blob/main/LICENSE.txt)

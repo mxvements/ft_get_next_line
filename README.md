@@ -103,11 +103,13 @@ typedef struct stash
 
 I'm aware that more efficient code can be implemented (e.g only getting the length of the stash when initizalizing the length of the line to be returned), this is the code I submitted to the vogsphere.
 
+Also, the bonus code does not match the main code precisely because I wanted to do some last minute improvements.
+
 ## gnl_schema
 
 General schema of the code without the protection of variables and mallocs, and w/o all axiliary functions:
 
-1 - get_next_line()
+1 - get_next_line(), which calls gnl_update_struct() and gnl_get_line()
 ```C
 char	*get_next_line(int fd)
 {	
@@ -130,7 +132,7 @@ char	*get_next_line(int fd)
 	return (line);
 }
 ```
-2 - gnl_update_struct()
+2.1 - gnl_update_struct()
 ```C
 void	gnl_update_struct(int fd, t_stash *s_stash)
 {
@@ -142,7 +144,7 @@ void	gnl_update_struct(int fd, t_stash *s_stash)
 }
 ```
 
-3 - gnl_get_line()
+2.2 - gnl_get_line()
 ```C
 char	*gnl_get_line(t_stash *s_stash)
 {

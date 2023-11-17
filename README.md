@@ -43,6 +43,25 @@ This project will not only allow you to add a very convenient function to your c
 	- Develop get_next_line() using only one static variable.
 	- Your get_next_line() can manage multiple file descriptors at the same time. For example, if you can read from the file descriptors 3, 4 and 4, you should be able o read from a different fd per call without losing the reading thread of each file descriptor or returning a line from another fd.
 
+# How to use
+
+1 - Clone the repository
+```
+git@github.com:mxvements/ft_get_next_line.git
+```
+
+2 - Compilation
+
+This project does not include a Makefile, in order to compile you should check the main.c file to see what .txt file you're reading. For compile, run the following, and use the BUFFER_SIZE size you prefer, sin it's casted as an int, the max amount of memory that can be used is (2147483647 - 1)
+```
+cc -Wall -Wextra -Werror -D BUFFER_SIZE=42 main.c get_next_line.c get_next_line_utils.c
+```
+
+3 - To incluide it in your code, include the header
+```
+#include "get_next_line.h"
+```
+
 # Notes
 
 ## Note on the file descriptors
@@ -183,9 +202,5 @@ At 42 School, it is expected that almost every project is written in accordance 
 ## Aknowledgments
 - [Luiz-Pastor](https://github.com/Luiz-Pastor/get_next_line) helped me understand what gnl needed to do at the start. 
 
-# Contact
-```
-luciama2@student.42madrid.com
-```
 # License
 [MIT License](https://github.com/mxvements/ft_license/blob/main/LICENSE.txt)

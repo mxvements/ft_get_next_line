@@ -117,7 +117,7 @@ void	gnl_update_struct(int fd, t_stash *s_stash)
  * @return char*, line to return
  */
 char	*get_next_line(int fd)
-{	
+{
 	static t_stash	s_stash;
 	char			*line;
 

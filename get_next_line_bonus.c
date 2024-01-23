@@ -90,7 +90,7 @@ void	gnl_update_struct(int fd, t_stash *s_stash)
 
 //5
 char	*get_next_line(int fd)
-{	
+{
 	static t_stash	s_stash[OPEN_MAX];
 	char			*line;
 
